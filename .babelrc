@@ -1,0 +1,28 @@
+{
+  "presets": ["es2015-node6"],
+  "plugins": [
+    "add-module-exports",
+    "transform-es2015-destructuring",
+    "transform-object-rest-spread"
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        [
+          "webpack-loaders",
+          {
+            "config": "webpack.config.node.js",
+            "verbose": false
+          }
+        ]
+      ]
+    },
+    "production": {
+      "plugins": [
+        "transform-es2015-block-scoping",
+        "transform-es2015-arrow-functions",
+        "transform-es2015-template-literals"
+      ]
+    }
+  }
+}
