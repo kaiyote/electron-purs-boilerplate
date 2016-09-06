@@ -21,17 +21,30 @@ import Routing.Match.Class (lit)
 import View.Counter as Counter
 import View.Home as Home
 
-data Input a = Goto Routes a
+data Input a
+  = Goto Routes a
 
 data Routes
   = Home
   | Counter
 
+type State = { currentPage :: String }
+
+type Effects e = (dom :: DOM, avar :: AVAR, err :: EXCEPTION | e)
+
+type ChildState = Either Home.State Counter.State
+
+type ChildQuery = Coproduct Home.Input Counter.Input
+
+type ChildSlot = Either Home.Slot Counter.Slot
+
+type StateP g = ParentState State ChildState Input ChildQuery g ChildSlot
+
+type QueryP = Coproduct Input (ChildF ChildSlot ChildQuery)
+
 routing :: Match Routes
 routing = Counter <$ lit "" <* lit "counter"
       <|> Home <$ lit ""
-
-type State = { currentPage :: String }
 
 init :: State
 init = { currentPage: "Home" }
@@ -40,10 +53,7 @@ ui :: forall g. (Plus g) => Component (StateP g) QueryP g
 ui = parentComponent {render, eval, peek: Nothing}
   where
     render :: State -> ParentHTML ChildState Input ChildQuery g ChildSlot
-    render state =
-      H.div_
-        [ viewPage state.currentPage
-        ]
+    render state = viewPage state.currentPage
 
     viewPage :: String -> HTML (SlotConstructor ChildState ChildQuery g ChildSlot) Input
     viewPage "Home" = H.slot' pathToHome Home.Slot \_ -> { component: Home.ui, initialState: unit }
@@ -58,8 +68,6 @@ ui = parentComponent {render, eval, peek: Nothing}
       modify (_ { currentPage = "Home" })
       pure next
 
-type Effects e = (dom :: DOM, avar :: AVAR, err :: EXCEPTION | e)
-
 routeSignal :: forall eff. Driver QueryP eff -> Aff (Effects eff) Unit
 routeSignal driver = do
   Tuple old new <- matchesAff routing
@@ -67,16 +75,6 @@ routeSignal driver = do
 
 redirects :: forall eff. Driver QueryP eff -> Maybe Routes -> Routes -> Aff (Effects eff) Unit
 redirects driver _ = driver <<< left <<< action <<< Goto
-
-type ChildState = Either Home.State Counter.State
-
-type ChildQuery = Coproduct Home.Input Counter.Input
-
-type ChildSlot = Either Home.Slot Counter.Slot
-
-type StateP g = ParentState State ChildState Input ChildQuery g ChildSlot
-
-type QueryP = Coproduct Input (ChildF ChildSlot ChildQuery)
 
 pathToHome :: ChildPath Home.State ChildState Home.Input ChildQuery Home.Slot ChildSlot
 pathToHome = cpL
