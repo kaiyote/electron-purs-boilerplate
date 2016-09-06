@@ -1,15 +1,23 @@
 module Main where
 
-import Prelude (Unit)
+import Prelude
 import Data.Maybe (Maybe)
 import Routes (Locations(..), routing)
 import Routing
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE, log)
+import View.Home as VH
+import Halogen
+import Halogen.Util
+import Control.Monad.Eff.Exception (throwException)
+import Control.Monad.Aff (runAff)
+import DOM.HTML.Types
 
 main :: forall e. Eff (console :: CONSOLE | e) Unit
-main = matches routing (\old new -> someAction old new)
+main = void $ runAff throwException (const (pure unit)) $ do
+  body <- awaitBody
+  matches routing (\old new -> (render body) old new)
   where
-    someAction :: forall e. Maybe Locations -> Locations -> Eff (console :: CONSOLE | e) Unit
-    someAction _ Home = log "Home"
-    someAction _ Counter = log "Counter"
+    render :: forall f. HTMLElement -> Maybe Locations -> Locations -> Eff (console :: CONSOLE | f) Unit
+    render body _ Home = runUI VH.view VH.initialState body
+    render body _ Counter = log "Counter"

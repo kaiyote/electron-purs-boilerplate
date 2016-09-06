@@ -10,7 +10,7 @@ data Locations
   | Counter
 
 home :: Match Locations
-home = Home <$ lit "/"
+home = Home <$ lit ""
 
 counter :: Match Locations
 counter = Counter <$ (lit "" *> lit "counter")
