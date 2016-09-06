@@ -1,17 +1,17 @@
-module View.Home where
+module View.Counter where
 
-import Prelude (type (~>), Unit, pure, (<>))
+import Prelude (type (~>), pure)
 
 import Data.Eq (class Eq)
 import Data.Generic
 import Data.Ord (class Ord)
-import Data.String (toLower)
 import Halogen (ComponentDSL, ComponentHTML, Component, component)
-import Halogen.HTML.Core (className)
 import Halogen.HTML.Indexed as H
-import Halogen.HTML.Properties.Indexed as P
 
-type State = Unit
+type State = { counter :: Int }
+
+init :: State
+init = { counter: 0 }
 
 data Input a = Noop a
 
@@ -30,15 +30,8 @@ ui = component { render, eval }
   where
     render :: State -> ComponentHTML Input
     render st =
-      H.div_
-        [ H.div [ P.class_ (className "container") ]
-            [ H.h2_ [ H.text "Home" ]
-            , link "Counter"
-            ]
-        ]
+      H.div_ [ H.text "Counter" ]
 
     eval :: Input ~> ComponentDSL State Input g
     eval (Noop n) = do
       pure n
-
-    link s = H.a [ P.href ("#/" <> toLower s) ] [ H.text s ]

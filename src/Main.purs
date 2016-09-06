@@ -1,23 +1,16 @@
 module Main where
 
-import Prelude
-import Data.Maybe (Maybe)
-import Routes (Locations(..), routing)
-import Routing
-import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Console (CONSOLE, log)
-import View.Home as VH
-import Halogen
-import Halogen.Util
-import Control.Monad.Eff.Exception (throwException)
-import Control.Monad.Aff (runAff)
-import DOM.HTML.Types
+import Prelude (Unit, bind, unit, pure, const, void, ($), (<<<))
 
-main :: forall e. Eff (console :: CONSOLE | e) Unit
+import Control.Monad.Eff (Eff)
+import Control.Monad.Eff.Exception (throwException)
+import Control.Monad.Aff (runAff, forkAff)
+import Halogen (runUI, parentState)
+import Halogen.Util (awaitBody)
+import View.Router
+
+main :: forall ef. Eff (Effects ef) Unit
 main = void $ runAff throwException (const (pure unit)) $ do
   body <- awaitBody
-  matches routing (\old new -> (render body) old new)
-  where
-    render :: forall f. HTMLElement -> Maybe Locations -> Locations -> Eff (console :: CONSOLE | f) Unit
-    render body _ Home = runUI VH.view VH.initialState body
-    render body _ Counter = log "Counter"
+  driver <- runUI ui (parentState init) body
+  forkAff $ routeSignal driver
