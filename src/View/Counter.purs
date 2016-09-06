@@ -1,6 +1,9 @@
 module View.Counter where
 
-import Prelude (class Ord, class Eq, type (~>), pure, bind, mod, (+), ($), (-), (==), (<>), map, show)
+import Prelude (class Ord, class Eq, type (~>), pure, bind, mod, (+), ($), (-), (==), (<>), map, show, unit)
+
+import Control.Monad.Aff (later', launchAff)
+import Control.Monad.Aff.Free
 
 import Data.String (toLower)
 import Data.Generic (class Generic, gCompare, gEq)
@@ -63,6 +66,8 @@ ui = component { render, eval }
       modify (\s -> if s `mod` 2 == 0 then s else s + 1)
       pure n
     eval (IncrementAsync n) = do
+      modify (_ + 1)
+      --_ <- later' 1000 (pure unit)
       pure n
 
     link s = H.a [ P.href ("#/" <> toLower s) ]
