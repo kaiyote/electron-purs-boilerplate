@@ -7,10 +7,12 @@ import Control.Plus (class Plus, (<|>))
 import Control.Monad.Aff (Aff())
 import Control.Monad.Aff.AVar (AVAR)
 import Control.Monad.Eff.Exception (EXCEPTION)
+
 import Data.Either (Either)
 import Data.Functor.Coproduct (Coproduct(), left)
 import Data.Maybe (Maybe(Nothing))
 import Data.Tuple (Tuple(..))
+
 import DOM (DOM)
 import Halogen (ChildF, ParentState, Driver, ParentDSL, SlotConstructor, HTML, ParentHTML, Component, action, parentComponent, modify)
 import Halogen.Component.ChildPath (ChildPath(), cpR, cpL)
@@ -18,6 +20,7 @@ import Halogen.HTML.Indexed as H
 import Routing (matchesAff)
 import Routing.Match (Match)
 import Routing.Match.Class (lit)
+
 import View.Counter as Counter
 import View.Home as Home
 

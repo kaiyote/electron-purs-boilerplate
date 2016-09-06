@@ -4,6 +4,7 @@ import Prelude (class Ord, class Eq, type (~>), pure, bind, mod, (+), ($), (-), 
 
 import Data.String (toLower)
 import Data.Generic (class Generic, gCompare, gEq)
+
 import Halogen (ComponentDSL, ComponentHTML, Component, component, modify)
 import Halogen.HTML.Core (className)
 import Halogen.HTML.Events.Indexed as E
@@ -16,6 +17,7 @@ data Input a
   = Increment a
   | Decrement a
   | IncrementIfOdd a
+  | IncrementAsync a
 
 data Slot = Slot
 
@@ -45,6 +47,8 @@ ui = component { render, eval }
                 [ H.i [ P.classes (map className [ "fa", "fa-minus" ]) ] [] ]
             , H.button [ P.class_ (className "button"), E.onClick (E.input_ IncrementIfOdd) ]
                 [ H.text "odd" ]
+            , H.button [ P.class_ (className "button"), E.onClick (E.input_ IncrementAsync) ]
+                [ H.text "async" ]
             ]
         ]
 
@@ -58,5 +62,8 @@ ui = component { render, eval }
     eval (IncrementIfOdd n) = do
       modify (\s -> if s `mod` 2 == 0 then s else s + 1)
       pure n
+    eval (IncrementAsync n) = do
+      pure n
 
-    link s = H.a [ P.href ("#/" <> toLower s) ] [ H.i [ P.classes (map className ["fa", "fa-arrow-left", "fa-3x"]) ] [] ]
+    link s = H.a [ P.href ("#/" <> toLower s) ]
+              [ H.i [ P.classes (map className [ "fa", "fa-arrow-left", "fa-3x" ]) ] [] ]

@@ -6,6 +6,7 @@ import Data.Eq (class Eq)
 import Data.Generic
 import Data.Ord (class Ord)
 import Data.String (toLower)
+
 import Halogen (ComponentDSL, ComponentHTML, Component, component)
 import Halogen.HTML.Core (className)
 import Halogen.HTML.Indexed as H
