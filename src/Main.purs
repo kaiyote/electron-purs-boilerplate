@@ -1,22 +1,44 @@
 module Main where
 
-import Prelude (Unit, bind, unit, pure, const, void, ($), (<<<), (=<<))
+import Prelude (bind, pure)
 
-import Control.Monad.Aff (runAff, forkAff)
+import Control.Bind ((=<<))
 import Control.Monad.Eff (Eff)
-import Control.Monad.Eff.Exception (throwException, error)
-import Control.Monad.Error.Class (throwError)
 
-import Data.Maybe (maybe)
+import DOM (DOM)
 
-import Halogen (runUI, parentState)
-import Halogen.Util (awaitLoad, selectElement)
+import Pux (App, Config, CoreEffects, fromSimple, renderToDOM, start)
+import Pux.Devtool (Action, start) as PD
+import Pux.Router (sampleUrl)
 
-import View.Router
+import Signal ((~>))
 
-main :: forall ef. Eff (Effects ef) Unit
-main = void $ runAff throwException (const (pure unit)) $ do
-  awaitLoad
-  container <- maybe (throwError (error "Could not find '#container'")) pure =<< selectElement "#container"
-  driver <- runUI ui (parentState init) container
-  forkAff $ routeSignal driver
+import Routes (match)
+import Layout (Action(PageView), State, view, update)
+
+type AppEffects = (dom :: DOM)
+
+config :: forall eff. State -> Eff (dom :: DOM | eff) (Config State Action AppEffects)
+config state = do
+  urlSignal <- sampleUrl
+  let routeSignal = urlSignal ~> \r -> PageView (match r)
+  pure
+    { initialState : state
+    , update: fromSimple update
+    , view: view
+    , inputs: [ routeSignal ]
+    }
+
+main :: State -> Eff (CoreEffects AppEffects) (App State Action)
+main state = do
+  app <- start =<< config state
+  renderToDOM "#container" app.html
+  --| For hot-reloading
+  pure app
+
+debug :: State -> Eff (CoreEffects AppEffects) (App State (PD.Action Action))
+debug state = do
+  app <- PD.start =<< config state
+  renderToDOM "#container" app.html
+  --| For hot-reloading
+  pure app

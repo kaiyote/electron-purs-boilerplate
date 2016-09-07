@@ -53,4 +53,6 @@ const config = {
   target: 'electron-renderer'
 }
 
+config.module.loaders[0].query.bundle = true
+
 export default config

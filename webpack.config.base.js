@@ -6,8 +6,6 @@ export default {
       test: /\.purs$/,
       loader: 'purs',
       query: {
-        src: ['bower_components/purescript-*/src/**/*.purs', 'src/**/*.purs'],
-        bundle: true,
         psc: 'psa',
         pscArgs: {sourceMaps: true}
       }

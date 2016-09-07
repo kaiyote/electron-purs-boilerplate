@@ -7,7 +7,7 @@ const config = {
   debug: true,
 
   entry: [
-    'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr',
+    'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr&reload=true',
     './app/index'
   ],
 
