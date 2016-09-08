@@ -1,44 +1,43 @@
 module Main where
 
-import Prelude (bind, pure)
+import Prelude (bind, const, show, pure, (-), (+))
 
-import Control.Bind ((=<<))
 import Control.Monad.Eff (Eff)
-
 import DOM (DOM)
 
-import Pux (App, Config, CoreEffects, fromSimple, renderToDOM, start)
-import Pux.Devtool (Action, start) as PD
-import Pux.Router (sampleUrl)
+import Pux (App, CoreEffects, renderToDOM, fromSimple, start)
+import Pux.Html (Html, text, button, span, div)
+import Pux.Html.Events (onClick)
 
-import Signal ((~>))
+data Action = Increment | Decrement
 
-import Routes (match)
-import Layout (Action(PageView), State, view, update)
-
+type State = Int
 type AppEffects = (dom :: DOM)
 
-config :: forall eff. State -> Eff (dom :: DOM | eff) (Config State Action AppEffects)
-config state = do
-  urlSignal <- sampleUrl
-  let routeSignal = urlSignal ~> \r -> PageView (match r)
-  pure
-    { initialState : state
-    , update: fromSimple update
-    , view: view
-    , inputs: [ routeSignal ]
-    }
+init :: State
+init = 0
+
+update :: Action -> State -> State
+update Increment count = count + 1
+update Decrement count = count - 1
+
+view :: State -> Html Action
+view count =
+  div
+    []
+    [ button [ onClick (const Increment) ] [ text "Increment" ]
+    , span [] [ text (show count) ]
+    , button [ onClick (const Decrement) ] [ text "Decrement" ]
+    ]
 
 main :: State -> Eff (CoreEffects AppEffects) (App State Action)
 main state = do
-  app <- start =<< config state
-  renderToDOM "#container" app.html
-  --| For hot-reloading
-  pure app
+  app <- start
+    { initialState: state
+    , update: fromSimple update
+    , view: view
+    , inputs: []
+    }
 
-debug :: State -> Eff (CoreEffects AppEffects) (App State (PD.Action Action))
-debug state = do
-  app <- PD.start =<< config state
   renderToDOM "#container" app.html
-  --| For hot-reloading
   pure app
