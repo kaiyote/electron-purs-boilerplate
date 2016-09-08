@@ -7,7 +7,10 @@ export default {
       loader: 'purs',
       query: {
         psc: 'psa',
-        pscArgs: {sourceMaps: true}
+        pscArgs: {
+          sourceMaps: true,
+          censorLib: true
+        }
       }
     }, {
       test: /\.js$/,

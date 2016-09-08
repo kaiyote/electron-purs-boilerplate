@@ -9,9 +9,14 @@
   "dependencies": {
     "purescript-console": "^1.0.0",
     "purescript-pux": "^5.0.3",
-    "purescript-pux-devtool": "^3.0.1"
+    "purescript-pux-devtool": "^3.0.1",
+    "purescript-routing": "^2.0.0"
   },
   "devDependencies": {
     "purescript-psci-support": "^1.0.0"
+  },
+  "resolutions": {
+    "purescript-dom": "^2.0.0",
+    "purescript-js-date": "^2.0.0"
   }
 }
