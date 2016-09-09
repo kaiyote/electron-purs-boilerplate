@@ -1,7 +1,10 @@
 module View.Counter where
 
-import Prelude (mod, show, const, (+), (-), (==), ($))
+import Prelude (mod, show, const, pure, (+), (-), (==), ($))
 
+import Control.Monad.Aff (later')
+
+import Pux (EffModel, noEffects, onlyEffects)
 import Pux.Html (Html, text, div, a, i, button)
 import Pux.Html.Attributes (className, href)
 import Pux.Html.Events (onClick)
@@ -11,6 +14,7 @@ data Action
   = Increment
   | Decrement
   | IncrementIfOdd
+  | IncrementAsync
 
 init :: State
 init = 0
@@ -24,11 +28,15 @@ view count =
         [ button [ className "button", onClick (const Increment) ] [ i [ className "fa fa-plus" ] [] ]
         , button [ className "button", onClick (const Decrement) ] [ i [ className "fa fa-minus" ] [] ]
         , button [ className "button", onClick (const IncrementIfOdd) ] [ text "odd" ]
-        , button [ className "button" ] [ text "async" ]
+        , button [ className "button", onClick (const IncrementAsync) ] [ text "async" ]
         ]
     ]
 
-update :: Action -> State -> State
-update Increment counter = counter + 1
-update Decrement counter = counter - 1
-update IncrementIfOdd counter = if counter `mod` 2 == 0 then counter else counter + 1
+update :: forall eff. Action -> State -> EffModel State Action (eff)
+update Increment counter = noEffects $ counter + 1
+update Decrement counter = noEffects $ counter - 1
+update IncrementIfOdd counter = noEffects $ if counter `mod` 2 == 0 then counter else counter + 1
+update IncrementAsync counter =
+  { state: counter
+  , effects: [ do later' 1000 $ pure Increment ]
+  }
