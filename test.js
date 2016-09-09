@@ -13,9 +13,7 @@ test.beforeEach(t => {
   return t.context.app.start()
 })
 
-test.afterEach(t => {
-  return t.context.app.stop()
-})
+test.afterEach(t => t.context.app.stop())
 
 test.serial('app should start and report its title', async t => {
   let app = t.context.app
@@ -27,7 +25,7 @@ test.serial('app should start and report its title', async t => {
 test.serial('can navigate between home screen and counter screen', async t => {
   let app = t.context.app
   await app.client.waitUntilWindowLoaded()
-  await app.client.waitForExist ('.container')
+  await app.client.waitForExist('.container')
   await app.client.click('.container > a')
   await app.client.waitForExist('.backButton')
   await app.client.click('.backButton > a')
@@ -38,7 +36,7 @@ test.serial('can navigate between home screen and counter screen', async t => {
 test.serial('the buttons on counter screen function', async t => {
   let app = t.context.app
   await app.client.waitUntilWindowLoaded()
-  await app.client.waitForExist ('.container')
+  await app.client.waitForExist('.container')
   await app.client.click('.container > a')
   await app.client.waitForExist('.backButton')
   t.is('0', await app.client.getText('.counter'))

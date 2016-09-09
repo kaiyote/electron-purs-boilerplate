@@ -7,7 +7,7 @@ const debug = process.env.NODE_ENV === 'development'
 
 if (module.hot) {
   let app = Main[debug ? 'debug' : 'main'](window.lastState || Main.init)()
-  app.state.subscribe(state => window.lastState = state)
+  app.state.subscribe(state => { window.lastState = state })
   module.hot.accept()
 } else {
   Main[debug ? 'debug' : 'main'](Main.init)()
