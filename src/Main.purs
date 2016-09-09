@@ -1,4 +1,4 @@
-module Main where
+module Main (main, debug, init) where
 
 import Prelude (bind, pure, ($))
 
@@ -15,6 +15,9 @@ import App (AppEffects, State, Action(..), view, update)
 import App.Route (Location(..), routing)
 import View.Counter (init) as Counter
 
+init :: State
+init = { currentRoute: Home, counter: Counter.init }
+
 routes :: forall eff. Eff (channel :: CHANNEL | eff) (Signal Action)
 routes = do
   chan <- channel Home
@@ -30,9 +33,6 @@ config state = do
     , view: view
     , inputs: [ routeSignal ]
     }
-
-init :: State
-init = { currentRoute: Home, counter: Counter.init }
 
 main :: State -> Eff (CoreEffects AppEffects) (App State Action)
 main state = do
