@@ -1,6 +1,6 @@
 module App where
 
-import Prelude (map, otherwise, unit, ($), (==))
+import Prelude (map, unit, ($), (==))
 
 import DOM (DOM)
 
@@ -38,9 +38,8 @@ mapChildEffModel childToParentState parentAction parentState childEffModel =
   mapState (childToParentState parentState) $ mapEffects parentAction childEffModel
 
 view :: State -> Html Action
-view state =
-  div [] [ pageView state ]
+view state = div [] [ pageView state ]
 
 pageView :: State -> Html Action
-pageView ({currentRoute, counter}) | currentRoute == Counter = map CAction $ Counter.view counter
-                                   | otherwise = map HAction $ Home.view unit
+pageView {currentRoute: Counter, counter} = map CAction $ Counter.view counter
+pageView _ = map HAction $ Home.view unit
