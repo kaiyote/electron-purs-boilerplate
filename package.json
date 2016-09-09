@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "test": "pulp test",
-    "test-e2e": "ava test.js",
+    "test-e2e": "npm run build && ava test.js",
     "lint": "standard \"*.js\" \"app/**/*.js\" \"test/**/*.js\" --verbose | snazzy",
     "hot-server": "node -r babel-register server.js",
     "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --progress --profile --colors",
