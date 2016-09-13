@@ -2,15 +2,20 @@
 
 const os = require('os')
 const webpack = require('webpack')
-const electronCfg = require('./webpack.config.electron.js')
-const cfg = require('./webpack.config.production.js')
+const electronCfg = require('../webpack.config.electron.js')
+const cfg = require('../webpack.config.production.js')
 const packager = require('electron-packager')
 const del = require('del')
 const exec = require('child_process').exec
 const argv = require('minimist')(process.argv.slice(2))
-const pkg = require('./package.json')
+const pkg = require('../package.json')
 const deps = Object.keys(pkg.dependencies)
 const devDeps = Object.keys(pkg.devDependencies)
+const externals = Object.keys(electronCfg.externals)
+const externalDevDeps = externals.map(external => {
+  let extPkg = require(`../node_modules/${external}/package.json`)
+  return Object.keys(extPkg.devDependencies).map(devDep => `${external}/node_modules/${devDep}($|/)`)
+})
 
 const appName = argv.name || argv.n || pkg.productName
 const shouldUseAsar = argv.asar || argv.a || false
@@ -37,9 +42,9 @@ const DEFAULT_OPTS = {
     '^/.(babelrc|editorconfig|gitattributes|gitignore)$'
   ].concat(devDeps.map(name => `/node_modules/${name}($|/)`))
   .concat(
-    deps.filter(name => !electronCfg.externals.includes(name))
+    deps.filter(name => !externals.includes(name))
       .map(name => `/node_modules/${name}($|/)`)
-  )
+  ).concat(...externalDevDeps)
 }
 
 const icon = argv.icon || argv.i || 'app/app'
@@ -57,7 +62,7 @@ if (version) {
   // use the same version as the currently-installed electron-prebuilt
   exec('npm list electron-prebuilt --dev', (err, stdout) => {
     if (err) {
-      DEFAULT_OPTS.version = '1.1.0'
+      DEFAULT_OPTS.version = '1.3.5'
     } else {
       DEFAULT_OPTS.version = stdout.split('electron-prebuilt@')[1].replace(/\s/g, '')
     }
@@ -129,7 +134,7 @@ function pack (plat, arch, cb) {
 }
 
 function log (plat, arch) {
-  return (err, filepath) => {
+  return err => {
     if (err) return console.error(err)
     console.log(`${plat}-${arch} finished!`)
   }
