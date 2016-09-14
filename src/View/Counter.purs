@@ -36,7 +36,4 @@ update :: forall eff. Action -> State -> EffModel State Action (eff)
 update Increment counter = noEffects $ counter + 1
 update Decrement counter = noEffects $ counter - 1
 update IncrementIfOdd counter = noEffects $ if counter `mod` 2 == 0 then counter else counter + 1
-update IncrementAsync counter =
-  { state: counter
-  , effects: [ do later' 1000 $ pure Increment ]
-  }
+update IncrementAsync counter = onlyEffects counter [ do later' 1000 $ pure Increment ]
