@@ -4,11 +4,15 @@ const join = require('path').join
 
 const main = join(__dirname, '../main.development.js')
 
+console.log(main)
+
 const waitOpts = {
   resources: [
     main,
     'http://localhost:3000/dist/bundle.js'
-  ]
+  ],
+  log: true,
+  delay: 10000
 }
 
 waitOn(waitOpts, err => {
