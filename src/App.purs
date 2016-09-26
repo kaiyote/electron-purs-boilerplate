@@ -1,9 +1,7 @@
 module App where
 
 import Prelude (map, unit, ($), (==))
-
 import DOM (DOM)
-
 import Pux (EffModel, noEffects, mapState, mapEffects)
 import Pux.Html (Html, div)
 

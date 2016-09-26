@@ -1,12 +1,10 @@
 module App.Route where
 
 import Prelude (class Eq, Unit)
-
 import Control.Alt ((<|>))
 import Control.Apply ((*>))
 import Data.Functor ((<$))
 import Data.Generic (class Generic)
-
 import Routing.Match (Match)
 import Routing.Match.Class (lit)
 

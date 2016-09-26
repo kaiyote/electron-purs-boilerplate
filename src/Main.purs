@@ -1,12 +1,10 @@
 module Main (main, debug, init) where
 
 import Prelude (bind, pure, ($))
-
 import Control.Bind ((=<<))
 import Control.Monad.Eff (Eff)
 import Signal (Signal, (~>))
 import Signal.Channel (CHANNEL, channel, send, subscribe)
-
 import Pux (App, CoreEffects, Config, renderToDOM, start)
 import Pux.Devtool (Action, start) as PD
 import Routing (matches)

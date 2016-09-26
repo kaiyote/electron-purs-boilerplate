@@ -5,9 +5,8 @@ import Control.Monad.Aff.AVar (AVAR)
 import Control.Monad.Eff (Eff)
 import Control.Monad.Eff.Console (CONSOLE)
 import Data.Either (Either(Right))
-
 import Test.Unit (TestSuite, suite, test)
-import Test.Unit.Assert (assert, equal, equal')
+import Test.Unit.Assert (equal')
 import Test.Unit.Main (runTest)
 import Test.Unit.Console (TESTOUTPUT)
 
@@ -21,8 +20,8 @@ main = runTest do
 routeSuite :: forall e. TestSuite e
 routeSuite = suite "route matching" do
   test "counter" do
-    equal (matchHash routing "/counter") (Right Counter)
+    equal' "/counter should route to Counter" (Right Counter) (matchHash routing "/counter")
   test "home" do
-    equal (matchHash routing "") (Right Home)
-    equal (matchHash routing "/") (Right Home)
-    equal (matchHash routing "/gibberish") (Right Home)
+    equal' "'' should route to Home" (Right Home) (matchHash routing "")
+    equal' "/ should route to Home" (Right Home) (matchHash routing "/")
+    equal' "anything that's not /counter should route to Home" (Right Home) (matchHash routing "/gibberish")

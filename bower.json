@@ -18,6 +18,7 @@
   },
   "resolutions": {
     "purescript-dom": "^2.0.0",
-    "purescript-js-date": "^2.0.0"
+    "purescript-js-date": "^2.0.0",
+    "purescript-prelude": "^1.0.1"
   }
 }

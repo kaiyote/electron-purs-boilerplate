@@ -1,9 +1,7 @@
 module View.Counter where
 
 import Prelude (mod, show, const, pure, (+), (-), (==), ($))
-
 import Control.Monad.Aff (later')
-
 import Pux (EffModel, noEffects, onlyEffects)
 import Pux.Html (Html, text, div, a, i, button)
 import Pux.Html.Attributes (className, href)

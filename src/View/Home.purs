@@ -1,7 +1,6 @@
 module View.Home where
 
 import Prelude (Unit)
-
 import Pux.Html (Html, text, h2, div, a)
 import Pux.Html.Attributes (className, href)
 
