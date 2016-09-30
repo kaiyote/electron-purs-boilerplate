@@ -7,7 +7,7 @@
   "scripts": {
     "test": "pulp test",
     "test-e2e": "npm run build && ava test.js",
-    "lint": "standard \"*.js\" \"app/**/*.js\" \"test/**/*.js\" --verbose | snazzy",
+    "lint": "standard \"*.js\" \"**/*.es6\" \"app/**/*.js\" \"test/**/*.js\" --verbose | snazzy",
     "hot-server": "node -r babel-register util/server.js",
     "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --progress --profile --colors",
     "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --progress --profile --colors",

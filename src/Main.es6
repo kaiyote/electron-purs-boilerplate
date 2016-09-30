@@ -1,1 +1,1 @@
-exports.log = item => () => console.log("hi" + item)
+exports.log = item => () => console.log('hi' + item)
