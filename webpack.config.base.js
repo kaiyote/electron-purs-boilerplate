@@ -14,7 +14,7 @@ export default {
       }
     }, {
       test: /\.js$/,
-      exclude: [/node_modules|bower_components/],
+      exclude: [/node_modules|bower_components|src/],
       loaders: ['source-map', 'babel']
     }, {
       test: /\.json$/,

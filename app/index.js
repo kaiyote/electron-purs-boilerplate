@@ -1,7 +1,7 @@
 'use strict'
 
 import './styles/app'
-import {debug, main, init} from '../src/Main'
+import {debug, main, init} from '../src/Main.purs'
 
 const devMode = process.env.NODE_ENV === 'development'
 

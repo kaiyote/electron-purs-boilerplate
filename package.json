@@ -11,13 +11,14 @@
     "hot-server": "node -r babel-register util/server.js",
     "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --progress --profile --colors",
     "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --progress --profile --colors",
-    "build": "npm run build-main && npm run build-renderer",
+    "build": "npm run ffi-compile && npm run build-main && npm run build-renderer",
     "start": "cross-env NODE_ENV=production electron ./",
     "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register main.development.js",
     "package": "cross-env NODE_ENV=production node -r babel-register util/package.js",
     "package-all": "npm run package -- --all",
     "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json && bower install",
-    "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\""
+    "ffi-compile": "babel ./src --only *.es6 --source-maps --out-dir ./src",
+    "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\" \"npm run ffi-compile -- -w\""
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
@@ -46,6 +47,7 @@
   "devDependencies": {
     "asar": "^0.12.3",
     "ava": "^0.16.0",
+    "babel-cli": "^6.16.0",
     "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.2",
     "babel-loader": "^6.2.5",

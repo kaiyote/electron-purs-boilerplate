@@ -1,6 +1,6 @@
 module Main (main, debug, init) where
 
-import Prelude (bind, pure, ($))
+import Prelude (Unit, bind, pure, ($))
 import Control.Bind ((=<<))
 import Control.Monad.Eff (Eff)
 import Signal (Signal, (~>))
@@ -44,6 +44,9 @@ debug :: State -> Eff (CoreEffects AppEffects) (App State (PD.Action Action))
 debug state = do
   conf <- config state
   app <- PD.start conf
+  log " from main"
   renderToDOM "#container" app.html
   --| for hot-reload
   pure app
+
+foreign import log :: forall eff a. a -> Eff eff Unit
