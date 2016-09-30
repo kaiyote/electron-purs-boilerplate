@@ -56,7 +56,7 @@ $ npm run dev
 
 #### Devtron
 
-Run `require('devtron').install()` in the DevTools console to install Devtron.
+Devtron is automatically configured by electron-debug.
 
 *See [Devtron](http://electron.atom.io/devtron/) for more information.*
 

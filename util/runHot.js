@@ -9,10 +9,8 @@ console.log(main)
 const waitOpts = {
   resources: [
     main,
-    'http://localhost:3000/dist/bundle.js'
-  ],
-  log: true,
-  delay: 10000
+    'http-get://localhost:3000/dist/bundle.js'
+  ]
 }
 
 waitOn(waitOpts, err => {

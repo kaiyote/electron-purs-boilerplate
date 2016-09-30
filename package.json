@@ -13,7 +13,7 @@
     "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --progress --profile --colors",
     "build": "npm run ffi-compile && npm run build-main && npm run build-renderer",
     "start": "cross-env NODE_ENV=production electron ./",
-    "start-hot": "cross-env HOT=1 NODE_ENV=development electron -r babel-register main.development.js",
+    "start-hot": "cross-env HOT=1 NODE_ENV=development node -r babel-register util/runHot.js",
     "package": "cross-env NODE_ENV=production node -r babel-register util/package.js",
     "package-all": "npm run package -- --all",
     "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json && bower install",
@@ -82,7 +82,7 @@
     "style-loader": "^0.13.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^2.3.1",
-    "wait-on": "^1.5.2",
+    "wait-on": "^1.5.3",
     "webpack": "^1.13.2",
     "webpack-dev-middleware": "^1.6.1",
     "webpack-hot-middleware": "^2.12.2"
