@@ -10,3 +10,5 @@ main.js*
 /src/**/*.js
 /src/**/*.map
 /release/
+.DS_Store
+yarn-error.log
