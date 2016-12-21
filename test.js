@@ -2,7 +2,7 @@
 
 import test from 'ava'
 import { Application } from 'spectron'
-import electronPrebuilt from 'electron-prebuilt'
+import electronPrebuilt from 'electron'
 
 test.beforeEach(t => {
   t.context.app = new Application({

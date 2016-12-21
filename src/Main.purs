@@ -1,7 +1,6 @@
 module Main (main, debug, init) where
 
 import Prelude (Unit, bind, pure, ($))
-import Control.Bind ((=<<))
 import Control.Monad.Eff (Eff)
 import Signal (Signal, (~>))
 import Signal.Channel (CHANNEL, channel, send, subscribe)

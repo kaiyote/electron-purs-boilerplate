@@ -1,11 +1,13 @@
 {
-  "presets": ["es2015-node6"],
+  "presets": [
+    ["env", {
+      "targets": {
+        "node": 5,
+        "electron": 1.4
+      }
+    }]
+  ],
   "plugins": [
-    "add-module-exports",
-    "transform-es2015-destructuring",
-    "transform-object-rest-spread",
-    "transform-es2015-block-scoping",
-    "transform-es2015-arrow-functions",
-    "transform-es2015-template-literals"
+    "transform-object-rest-spread"
   ]
 }

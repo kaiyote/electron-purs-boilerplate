@@ -1,20 +1,21 @@
 'use strict'
 
-const os = require('os')
-const webpack = require('webpack')
-const electronCfg = require('../webpack.config.electron.js')
-const cfg = require('../webpack.config.production.js')
-const packager = require('electron-packager')
-const del = require('del')
-const exec = require('child_process').exec
-const argv = require('minimist')(process.argv.slice(2))
-const pkg = require('../package.json')
+import os from 'os'
+import webpack from 'webpack'
+import electronCfg from '../webpack.config.electron.js'
+import cfg from '../webpack.config.production.js'
+import packager from 'electron-packager'
+import del from 'del'
+import { exec } from 'child_process'
+import minimist from 'minimist'
+const argv = minimist(process.argv.slice(2))
+import pkg from '../package.json'
 const deps = Object.keys(pkg.dependencies)
 const devDeps = Object.keys(pkg.devDependencies)
-const externals = Object.keys(electronCfg.externals)
+const externals = electronCfg.externals
 const externalDevDeps = externals.map(external => {
   let extPkg = require(`../node_modules/${external}/package.json`)
-  return Object.keys(extPkg.devDependencies).map(devDep => `${external}/node_modules/${devDep}($|/)`)
+  return Object.keys(extPkg.devDependencies || {}).map(devDep => `${external}/node_modules/${devDep}($|/)`)
 })
 
 const appName = argv.name || argv.n || pkg.productName
@@ -35,11 +36,13 @@ const DEFAULT_OPTS = {
     '^/release($|/)',
     '^/main.development.js',
     '^/.*.sublime-project$',
-    '^/package.js$',
-    '^/server.js$',
+    '^/util($|/)$',
     '^/webpack..*.js$',
     '^/app/.*.(js)($|/)',
-    '^/.(babelrc|editorconfig|gitattributes|gitignore)$'
+    '^/.(babelrc|editorconfig|gitattributes|gitignore)$',
+    '^/bower.json$',
+    '^/yarn.lock$',
+    '^/test.js'
   ].concat(devDeps.map(name => `/node_modules/${name}($|/)`))
   .concat(
     deps.filter(name => !externals.includes(name))
@@ -60,11 +63,11 @@ if (version) {
   startPack()
 } else {
   // use the same version as the currently-installed electron-prebuilt
-  exec('npm list electron-prebuilt --dev', (err, stdout) => {
+  exec('npm list electron --dev', (err, stdout) => {
     if (err) {
-      DEFAULT_OPTS.version = '1.3.5'
+      DEFAULT_OPTS.version = '1.4.13'
     } else {
-      DEFAULT_OPTS.version = stdout.split('electron-prebuilt@')[1].replace(/\s/g, '')
+      DEFAULT_OPTS.version = stdout.split('electron@')[1].replace(/\s/g, '')
     }
 
     startPack()

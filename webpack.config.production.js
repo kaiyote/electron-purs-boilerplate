@@ -1,5 +1,6 @@
 import webpack from 'webpack'
 import ExtractTextPlugin from 'extract-text-webpack-plugin'
+import BabiliPlugin from 'babili-webpack-plugin'
 import baseConfig from './webpack.config.base'
 
 const config = {
@@ -39,14 +40,7 @@ const config = {
         NODE_ENV: JSON.stringify('production')
       }
     }),
-
-    new webpack.optimize.UglifyJsPlugin({
-      compressor: {
-        screw_ie8: true,
-        warnings: false
-      }
-    }),
-
+    new BabiliPlugin(),
     new ExtractTextPlugin('style.css', { allChunks: true })
   ],
 

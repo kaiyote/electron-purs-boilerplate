@@ -9,3 +9,4 @@ main.js*
 *.sublime-workspace
 /src/**/*.js
 /src/**/*.map
+/release/

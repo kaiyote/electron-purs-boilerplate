@@ -1,5 +1,5 @@
 const waitOn = require('wait-on')
-const electron = require('electron-prebuilt')
+const electron = require('electron')
 const join = require('path').join
 
 const main = join(__dirname, '../main.development.js')
