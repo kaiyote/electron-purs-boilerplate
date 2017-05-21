@@ -2,7 +2,8 @@
 /node_modules/
 /.pulp-cache/
 /output/
-/.psci*
+/.psc*
+/.psa*
 npm-debug.log
 dist/
 main.js*
@@ -12,3 +13,4 @@ main.js*
 /release/
 .DS_Store
 yarn-error.log
+.psc-ide-port

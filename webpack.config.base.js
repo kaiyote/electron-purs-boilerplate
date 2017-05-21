@@ -2,23 +2,22 @@ import path from 'path'
 
 export default {
   module: {
-    loaders: [{
+    rules: [{
       test: /\.purs$/,
-      loader: 'purs',
-      query: {
-        psc: 'psa',
-        pscArgs: {
-          sourceMaps: true,
-          censorLib: true
+      use: [{
+        loader: 'purs-loader',
+        options: {
+          psc: 'psa',
+          pscArgs: {
+            sourceMaps: true,
+            censorLib: true
+          }
         }
-      }
+      }]
     }, {
       test: /\.js$/,
       exclude: [/node_modules|bower_components|src/],
-      loaders: ['source-map', 'babel']
-    }, {
-      test: /\.json$/,
-      loader: 'json'
+      use: ['source-map-loader', 'babel-loader']
     }]
   },
   output: {
@@ -27,9 +26,8 @@ export default {
     libraryTarget: 'commonjs2'
   },
   resolve: {
-    extensions: ['', '.js', '.purs', '.styl'],
-    packageMains: ['webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main'],
-    modulesDirectories: ['node_modules', 'bower_components']
+    extensions: ['.js', '.purs', '.styl'],
+    modules: ['node_modules', 'bower_components']
   },
   plugins: [
 
