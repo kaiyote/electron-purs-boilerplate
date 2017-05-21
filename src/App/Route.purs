@@ -1,6 +1,6 @@
 module App.Route where
 
-import Prelude (class Eq, Unit)
+{-import Prelude (class Eq, Unit)
 import Control.Alt ((<|>))
 import Control.Apply ((*>))
 import Data.Functor ((<$))
@@ -21,4 +21,4 @@ routing =
   Home <$ homeSlash
 
 derive instance eqLocation :: Eq Location
-derive instance genericLocation :: Generic Location
+derive instance genericLocation :: Generic Location-}

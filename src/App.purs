@@ -1,5 +1,5 @@
 module App where
-
+{-
 import Prelude (map, unit, ($))
 import DOM (DOM)
 import Pux (EffModel, noEffects, mapState, mapEffects)
@@ -9,7 +9,7 @@ import App.Route
 import View.Home as Home
 import View.Counter as Counter
 
-data Action
+data Event
   = PageView Location
   | HAction Home.Action
   | CAction Counter.Action
@@ -41,3 +41,4 @@ view state = div [] [ pageView state ]
 pageView :: State -> Html Action
 pageView {currentRoute: Counter, counter} = map CAction $ Counter.view counter
 pageView _ = map HAction $ Home.view unit
+-}

@@ -72,6 +72,7 @@
     "json-loader": "^0.5.4",
     "minimist": "^1.2.0",
     "node-libs-browser": "^2.0.0",
+    "pulp": "^11.0.0",
     "purescript": "^0.11.4",
     "purescript-psa": "^0.5.1",
     "purs-loader": "^3.0.0",

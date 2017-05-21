@@ -1,6 +1,46 @@
-module Main (main, debug, init) where
+module Main (main, init, Event) where
 
-import Prelude (Unit, bind, pure, ($))
+import Prelude (Unit, bind, discard, const, pure, show, ($), (+), (-))
+import Control.Monad.Eff (Eff)
+import Pux (App, CoreEffects, EffModel, start, noEffects)
+import Pux.DOM.Events (onClick)
+import Pux.DOM.HTML (HTML)
+import Pux.Renderer.React (renderToDOM)
+import Text.Smolder.HTML (button, div, span)
+import Text.Smolder.Markup (attribute, text, (!), (#!))
+
+data Event = Increment | Decrement
+
+type State = Int
+
+init :: State
+init = 0
+
+foldp :: ∀ fx. Event -> State -> EffModel State Event fx
+foldp Increment n = noEffects $ n + 1
+foldp Decrement n = noEffects $ n - 1
+
+view :: State -> HTML Event
+view count =
+  div do
+    button ! attribute "key" "inc" #! onClick (const Increment) $ text "Increment"
+    span ! attribute "key" "span" $ text (show count)
+    button ! attribute "key" "dec" #! onClick (const Decrement) $ text "Decrement"
+
+main :: ∀ fx. State -> Eff (CoreEffects fx) (App _ Event State)
+main initialState = do
+  app <- start
+    { initialState
+    , view
+    , foldp
+    , inputs: []
+    }
+  log " from Main"
+
+  renderToDOM "#container" app.markup app.input
+  pure app
+
+{-import Prelude (Unit, bind, pure, ($))
 import Control.Monad.Eff (Eff)
 import Signal (Signal, (~>))
 import Signal.Channel (CHANNEL, channel, send, subscribe)
@@ -47,5 +87,6 @@ debug state = do
   renderToDOM "#container" app.html
   --| for hot-reload
   pure app
-
+-}
 foreign import log :: forall eff a. a -> Eff eff Unit
+

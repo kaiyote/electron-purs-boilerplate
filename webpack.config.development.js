@@ -4,8 +4,6 @@ import baseConfig from './webpack.config.base'
 const config = {
   ...baseConfig,
 
-  debug: true,
-
   entry: [
     'webpack-hot-middleware/client?path=http://localhost:3000/__webpack_hmr&reload=true',
     './app/index'
@@ -20,13 +18,13 @@ const config = {
   module: {
     ...baseConfig.module,
 
-    loaders: [
-      ...baseConfig.module.loaders,
+    rules: [
+      ...baseConfig.module.rules,
 
       {
         test: /\.styl$/,
         exclude: /node_modules|bower_components/,
-        loaders: ['style', 'css', 'stylus']
+        use: ['style-loader', 'css-loader', 'stylus-loader']
       }
     ]
   },
@@ -36,7 +34,7 @@ const config = {
 
     new webpack.HotModuleReplacementPlugin(),
 
-    new webpack.NoErrorsPlugin(),
+    new webpack.NoEmitOnErrorsPlugin(),
 
     new webpack.DefinePlugin({
       __DEV__: true,
