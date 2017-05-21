@@ -6,19 +6,19 @@
   "main": "main.js",
   "scripts": {
     "test": "pulp test",
-    "test-e2e": "npm run build && ava test.js",
+    "test-ui": "ava test.js",
+    "test-e2e": "run-s build test-ui",
     "lint": "standard \"*.js\" \"**/*.es6\" \"app/**/*.js\" \"test/**/*.js\" --verbose | snazzy",
     "hot-server": "node -r babel-register util/server.js",
     "build-main": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.electron.js --progress --profile --colors",
     "build-renderer": "cross-env NODE_ENV=production node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.config.production.js --progress --profile --colors",
-    "build": "npm run ffi-compile && npm run build-main && npm run build-renderer",
+    "build": "run-p ffi-compile build-main build-renderer",
     "start": "cross-env NODE_ENV=production electron ./",
     "start-hot": "cross-env HOT=1 NODE_ENV=development node -r babel-register util/runHot.js",
     "package": "cross-env NODE_ENV=production node -r babel-register util/package.js",
-    "package-all": "npm run package -- --all",
-    "postinstall": "node node_modules/fbjs-scripts/node/check-dev-engines.js package.json && bower install",
+    "postinstall": "bower install",
     "ffi-compile": "babel ./src --only *.es6 --source-maps --out-dir ./src",
-    "dev": "concurrently --kill-others \"npm run hot-server\" \"npm run start-hot\" \"npm run ffi-compile -- -w\""
+    "dev": "run-p hot-server start-hot \"ffi-compile -- -w\""
   },
   "bin": {
     "electron": "./node_modules/.bin/electron"
@@ -56,7 +56,6 @@
     "babel-register": "^6.18.0",
     "babili": "^0.0.12",
     "babili-webpack-plugin": "^0.0.11",
-    "concurrently": "^3.1.0",
     "cross-env": "^5.0.0",
     "css-loader": "^0.28.1",
     "debug": "^2.6.8",
@@ -72,6 +71,7 @@
     "json-loader": "^0.5.4",
     "minimist": "^1.2.0",
     "node-libs-browser": "^2.0.0",
+    "npm-run-all": "^4.0.2",
     "pulp": "^11.0.0",
     "purescript": "^0.11.4",
     "purescript-psa": "^0.5.1",
