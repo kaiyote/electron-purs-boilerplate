@@ -1,92 +1,62 @@
-module Main (main, init, Event) where
+module Main where
 
-import Prelude (Unit, bind, discard, const, pure, show, ($), (+), (-))
+import Prelude
+import Halogen as H
+import Halogen.HTML as HH
+import Halogen.HTML.Events as HE
+import Halogen.HTML.Properties as HP
 import Control.Monad.Eff (Eff)
-import Pux (App, CoreEffects, EffModel, start, noEffects)
-import Pux.DOM.Events (onClick)
-import Pux.DOM.HTML (HTML)
-import Pux.Renderer.React (renderToDOM)
-import Text.Smolder.HTML (button, div, span)
-import Text.Smolder.Markup (attribute, text, (!), (#!))
+import Data.Maybe (Maybe(..))
+import Halogen.Aff (HalogenEffects, runHalogenAff, awaitBody)
+import Halogen.VDom.Driver (runUI)
 
-data Event = Increment | Decrement
+type State = Boolean
 
-type State = Int
+data Query a
+  = Toggle a
+  | IsOn (Boolean -> a)
 
-init :: State
-init = 0
+type Input = Unit
 
-foldp :: ∀ fx. Event -> State -> EffModel State Event fx
-foldp Increment n = noEffects $ n + 1
-foldp Decrement n = noEffects $ n - 1
+data Message = Toggled Boolean
 
-view :: State -> HTML Event
-view count =
-  div do
-    button ! attribute "key" "inc" #! onClick (const Increment) $ text "Increment"
-    span ! attribute "key" "span" $ text (show count)
-    button ! attribute "key" "dec" #! onClick (const Decrement) $ text "Decrement"
+main :: Eff (HalogenEffects ()) Unit
+main = runHalogenAff do
+  body <- awaitBody
+  runUI myButton unit body
 
-main :: ∀ fx. State -> Eff (CoreEffects fx) (App _ Event State)
-main initialState = do
-  app <- start
-    { initialState
-    , view
-    , foldp
-    , inputs: []
+myButton :: ∀ m. H.Component HH.HTML Query Input Message m
+myButton =
+  H.component
+    { initialState: const initialState
+    , render
+    , eval
+    , receiver: const Nothing
     }
-  log " from Main"
+  where
 
-  renderToDOM "#container" app.markup app.input
-  pure app
+  initialState :: State
+  initialState = false
 
-{-import Prelude (Unit, bind, pure, ($))
-import Control.Monad.Eff (Eff)
-import Signal (Signal, (~>))
-import Signal.Channel (CHANNEL, channel, send, subscribe)
-import Pux (App, CoreEffects, Config, renderToDOM, start)
-import Pux.Devtool (Action, start) as PD
-import Routing (matches)
+  render :: State -> H.ComponentHTML Query
+  render state =
+    let
+      label = if state then "On" else "Off"
+    in
+      HH.button
+        [ HP.title label
+        , HE.onClick (HE.input_ Toggle)
+        ]
+        [ HH.text label ]
 
-import App (AppEffects, State, Action(..), view, update)
-import App.Route (Location(..), routing)
-import View.Counter (init) as Counter
-
-init :: State
-init = { currentRoute: Home, counter: Counter.init }
-
-routes :: forall eff. Eff (channel :: CHANNEL | eff) (Signal Action)
-routes = do
-  chan <- channel Home
-  matches routing (\_ -> send chan)
-  pure $ (subscribe chan) ~> PageView
-
-config :: forall eff. State -> Eff (channel :: CHANNEL | eff) (Config State Action AppEffects)
-config state = do
-  routeSignal <- routes
-  pure
-    { initialState: state
-    , update: update
-    , view: view
-    , inputs: [ routeSignal ]
-    }
-
-main :: State -> Eff (CoreEffects AppEffects) (App State Action)
-main state = do
-  conf <- config state
-  app <- start conf
-  renderToDOM "#container" app.html
-  --| for hot-reload
-  pure app
-
-debug :: State -> Eff (CoreEffects AppEffects) (App State (PD.Action Action))
-debug state = do
-  conf <- config state
-  app <- PD.start conf
-  log " from main"
-  renderToDOM "#container" app.html
-  --| for hot-reload
-  pure app
--}
-foreign import log :: forall eff a. a -> Eff eff Unit
-
+  eval :: Query ~> H.ComponentDSL State Query Message m
+  eval = case _ of
+    Toggle next -> do
+      state <- H.get
+      let nextState = not state
+      H.put nextState
+      H.raise $ Toggled nextState
+      pure next
+    IsOn reply -> do
+      state <- H.get
+      pure (reply state)
