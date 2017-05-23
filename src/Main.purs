@@ -1,62 +1,32 @@
 module Main where
 
 import Prelude
-import Halogen as H
-import Halogen.HTML as HH
-import Halogen.HTML.Events as HE
-import Halogen.HTML.Properties as HP
+import App (Query(..), ui)
+import App.Route (Location, routing)
+import Control.Monad.Aff (Aff, forkAff)
 import Control.Monad.Eff (Eff)
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe)
+import Data.Tuple (Tuple(..))
+import Halogen (HalogenIO, action, liftEff)
 import Halogen.Aff (HalogenEffects, runHalogenAff, awaitBody)
 import Halogen.VDom.Driver (runUI)
+import Routing (matchesAff)
 
-type State = Boolean
+foreign import log :: ∀ eff a. a -> Eff eff Unit
 
-data Query a
-  = Toggle a
-  | IsOn (Boolean -> a)
+routeSignal :: ∀ eff. HalogenIO Query Void (Aff (HalogenEffects eff))
+            -> Aff (HalogenEffects eff) Unit
+routeSignal driver = do
+  Tuple old new <- matchesAff routing
+  redirects driver old new
 
-type Input = Unit
+redirects :: ∀ eff. HalogenIO Query Void (Aff (HalogenEffects eff)) -> Maybe Location -> Location
+          -> Aff (HalogenEffects eff) Unit
+redirects driver _ = driver.query <<< action <<< Goto
 
-data Message = Toggled Boolean
-
-main :: Eff (HalogenEffects ()) Unit
+main :: ∀ eff. Eff (HalogenEffects eff) Unit
 main = runHalogenAff do
   body <- awaitBody
-  runUI myButton unit body
-
-myButton :: ∀ m. H.Component HH.HTML Query Input Message m
-myButton =
-  H.component
-    { initialState: const initialState
-    , render
-    , eval
-    , receiver: const Nothing
-    }
-  where
-
-  initialState :: State
-  initialState = false
-
-  render :: State -> H.ComponentHTML Query
-  render state =
-    let
-      label = if state then "On" else "Off"
-    in
-      HH.button
-        [ HP.title label
-        , HE.onClick (HE.input_ Toggle)
-        ]
-        [ HH.text label ]
-
-  eval :: Query ~> H.ComponentDSL State Query Message m
-  eval = case _ of
-    Toggle next -> do
-      state <- H.get
-      let nextState = not state
-      H.put nextState
-      H.raise $ Toggled nextState
-      pure next
-    IsOn reply -> do
-      state <- H.get
-      pure (reply state)
+  driver <- runUI ui unit body
+  _ <- forkAff $ routeSignal driver
+  liftEff $ log driver

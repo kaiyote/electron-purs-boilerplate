@@ -1,14 +1,12 @@
 'use strict'
 
 import './styles/app'
-import {main, init} from '../src/Main.purs'
-
-const devMode = process.env.NODE_ENV === 'development'
+import {main} from '../src/Main.purs'
 
 if (module.hot) {
-  let app = main(window.lastState || init)()
+  let app = main()
   app.state.subscribe(state => { window.lastState = state })
   module.hot.accept()
 } else {
-  main(init)()
+  main()
 }

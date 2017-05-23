@@ -1,4 +1,47 @@
 module App where
+
+import App.Route (Location(..))
+import Data.Maybe (Maybe(..))
+import Halogen (Component, component, get, put)
+import Halogen.Component (ComponentHTML, ComponentDSL)
+import Halogen.HTML (HTML, a, div, text)
+import Halogen.HTML.Properties (href)
+import Prelude (type (~>), Unit, Void, bind, const, discard, pure, ($), (<>))
+
+data Query a = Goto Location a
+
+type State = Location
+
+init :: State
+init = Home
+
+ui :: ∀ m. Component HTML Query Unit Void m
+ui = component
+  { initialState: const init
+  , render
+  , eval
+  , receiver: const Nothing
+  }
+
+render :: State -> ComponentHTML Query
+render state =
+  div []
+    [ a [ href "#/" ] [ text "Home" ]
+    , a [ href "#/counter" ] [ text "Counter" ]
+    , a [ href "#/nop" ] [ text "Not a Valid Route" ]
+    , text $ "Routed to: " <> label state
+    ]
+  where
+    label Counter = "Counter"
+    label Home = "Home"
+
+eval :: ∀ m. Query ~> ComponentDSL State Query Void m
+eval (Goto loc next) = do
+  state <- get
+  let nextState = loc
+  put nextState
+  pure next
+
 {-
 import Prelude (map, unit, ($))
 import DOM (DOM)
