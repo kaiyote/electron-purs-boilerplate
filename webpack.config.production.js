@@ -18,21 +18,22 @@ const config = {
   module: {
     ...baseConfig.module,
 
-    loaders: [
-      ...baseConfig.module.loaders,
+    rules: [
+      ...baseConfig.module.rules,
 
       {
         test: /\.styl$/,
         exclude: /node_modules|bower_components/,
-        loader: ExtractTextPlugin.extract('style', 'css!stylus')
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: ['css-loader', 'stylus-loader']
+        })
       }
     ]
   },
 
   plugins: [
     ...baseConfig.plugins,
-
-    new webpack.optimize.OccurenceOrderPlugin(),
 
     new webpack.DefinePlugin({
       __DEV__: false,
@@ -41,12 +42,15 @@ const config = {
       }
     }),
     new BabiliPlugin(),
-    new ExtractTextPlugin('style.css', { allChunks: true })
+    new ExtractTextPlugin({
+      filename: 'bundle.css',
+      allChunks: true
+    })
   ],
 
   target: 'electron-renderer'
 }
 
-config.module.loaders[0].query.bundle = true
+config.module.rules[0].use[0].options.bundle = true
 
 export default config

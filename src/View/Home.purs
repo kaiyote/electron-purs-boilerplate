@@ -1,17 +1,35 @@
 module View.Home where
 
-import Prelude (Unit)
-import Pux.Html (Html, text, h2, div, a)
-import Pux.Html.Attributes (className, href)
+import Data.Maybe (Maybe(..))
+import Halogen (Component, component)
+import Halogen.Component (ComponentDSL, ComponentHTML)
+import Halogen.HTML (ClassName(..), HTML, a, div, div_, h2_, text)
+import Halogen.HTML.Properties (class_, href)
+import Prelude (class Eq, class Ord, type (~>), Unit, Void, const, pure, unit)
+
+data Query a = Noop a
 
 type State = Unit
-data Action = Noop
 
-view :: State -> Html Action
-view s =
-  div []
-    [ div [ className "container" ]
-        [ h2 [] [ text "Home" ]
-        , a [ href "#/counter" ] [ text "Counter" ]
-        ]
+data Slot = Slot
+derive instance eqSlot :: Eq Slot
+derive instance ordSlot :: Ord Slot
+
+ui :: ∀ m. Component HTML Query Unit Void m
+ui = component
+  { initialState: const unit
+  , render
+  , eval
+  , receiver: const Nothing
+  }
+
+eval :: ∀ m. Query ~> ComponentDSL State Query Void m
+eval (Noop next) = pure next
+
+render :: State -> ComponentHTML Query
+render _ =
+  div_ [ div [ class_ (ClassName "container") ]
+    [ h2_ [ text "Home" ]
+    , a [ href "#/counter" ] [ text "Counter" ]
     ]
+  ]

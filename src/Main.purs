@@ -1,51 +1,32 @@
-module Main (main, debug, init) where
+module Main where
 
-import Prelude (Unit, bind, pure, ($))
+import Prelude
+import App (Query(..), ui)
+import App.Route (Location, routing)
+import Control.Monad.Aff (Aff, forkAff)
 import Control.Monad.Eff (Eff)
-import Signal (Signal, (~>))
-import Signal.Channel (CHANNEL, channel, send, subscribe)
-import Pux (App, CoreEffects, Config, renderToDOM, start)
-import Pux.Devtool (Action, start) as PD
-import Routing (matches)
+import Data.Maybe (Maybe)
+import Data.Tuple (Tuple(..))
+import Halogen (HalogenIO, action, liftEff)
+import Halogen.Aff (HalogenEffects, runHalogenAff, awaitBody)
+import Halogen.VDom.Driver (runUI)
+import Routing (matchesAff)
 
-import App (AppEffects, State, Action(..), view, update)
-import App.Route (Location(..), routing)
-import View.Counter (init) as Counter
+foreign import log :: ∀ eff a. a -> Eff eff Unit
 
-init :: State
-init = { currentRoute: Home, counter: Counter.init }
+routeSignal :: ∀ eff. HalogenIO Query Void (Aff (HalogenEffects eff))
+            -> Aff (HalogenEffects eff) Unit
+routeSignal driver = do
+  Tuple old new <- matchesAff routing
+  redirects driver old new
 
-routes :: forall eff. Eff (channel :: CHANNEL | eff) (Signal Action)
-routes = do
-  chan <- channel Home
-  matches routing (\_ -> send chan)
-  pure $ (subscribe chan) ~> PageView
+redirects :: ∀ eff. HalogenIO Query Void (Aff (HalogenEffects eff)) -> Maybe Location -> Location
+          -> Aff (HalogenEffects eff) Unit
+redirects driver _ = driver.query <<< action <<< Goto
 
-config :: forall eff. State -> Eff (channel :: CHANNEL | eff) (Config State Action AppEffects)
-config state = do
-  routeSignal <- routes
-  pure
-    { initialState: state
-    , update: update
-    , view: view
-    , inputs: [ routeSignal ]
-    }
-
-main :: State -> Eff (CoreEffects AppEffects) (App State Action)
-main state = do
-  conf <- config state
-  app <- start conf
-  renderToDOM "#container" app.html
-  --| for hot-reload
-  pure app
-
-debug :: State -> Eff (CoreEffects AppEffects) (App State (PD.Action Action))
-debug state = do
-  conf <- config state
-  app <- PD.start conf
-  log " from main"
-  renderToDOM "#container" app.html
-  --| for hot-reload
-  pure app
-
-foreign import log :: forall eff a. a -> Eff eff Unit
+main :: ∀ eff. Eff (HalogenEffects eff) Unit
+main = runHalogenAff do
+  body <- awaitBody
+  driver <- runUI ui unit body
+  _ <- forkAff $ routeSignal driver
+  liftEff $ log driver

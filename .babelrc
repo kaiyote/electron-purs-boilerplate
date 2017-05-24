@@ -3,7 +3,7 @@
     ["env", {
       "targets": {
         "node": 5,
-        "electron": 1.4
+        "electron": "1.4"
       }
     }]
   ],

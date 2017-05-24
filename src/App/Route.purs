@@ -11,6 +11,8 @@ import Routing.Match.Class (lit)
 data Location
   = Home
   | Counter
+derive instance eqLocation :: Eq Location
+derive instance genericLocation :: Generic Location
 
 homeSlash :: Match Unit
 homeSlash = lit ""
@@ -19,6 +21,3 @@ routing :: Match Location
 routing =
   Counter <$ (homeSlash *> lit "counter") <|>
   Home <$ homeSlash
-
-derive instance eqLocation :: Eq Location
-derive instance genericLocation :: Generic Location
