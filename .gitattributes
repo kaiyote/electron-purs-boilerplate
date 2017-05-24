@@ -1,3 +1,2 @@
 * text=auto
-webpack.*.js linguist-vendored
-/util linguist-vendored
+*.js linguist-vendored
