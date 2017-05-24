@@ -80,7 +80,7 @@ $ yarn package -- -a
 
 #### Options
 
-- --name, -n: Application name (default: ElectronPursBoilerplate)
+- --name, -n: Application name (default: ElectronPurs)
 - --version, -v: Electron version (default: package.json version)
 - --asar, -a: [asar](https://github.com/atom/asar) support (default: false)
 - --icon, -i: Application icon
