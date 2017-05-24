@@ -1,6 +1,8 @@
 module View.Counter where
+import Control.Monad.Aff (Aff, delay)
 import Data.Maybe (Maybe(..))
-import Halogen (Component, component)
+import Data.Time.Duration (Milliseconds(..))
+import Halogen (Component, component, liftAff)
 import Halogen.Component (ComponentDSL, ComponentHTML)
 import Halogen.HTML (ClassName(..), HTML, a, button, div, div_, i, text)
 import Halogen.HTML.Events (input_, onClick)
@@ -23,7 +25,7 @@ derive instance ordSlot :: Ord Slot
 init :: State
 init = 0
 
-ui :: ∀ m. Component HTML Query Unit Void m
+ui :: ∀ eff. Component HTML Query Unit Void (Aff eff)
 ui = component
   { initialState: const init
   , render
@@ -31,7 +33,7 @@ ui = component
   , receiver: const Nothing
   }
 
-eval :: ∀ m. Query ~> ComponentDSL State Query Void m
+eval :: ∀ eff. Query ~> ComponentDSL State Query Void (Aff eff)
 eval (Increment next) = do
   modify ((+) 1)
   pure next
@@ -41,7 +43,10 @@ eval (Decrement next) = do
 eval (IncrementIfOdd next) = do
   modify \x -> if x `mod` 2 == 1 then x + 1 else x
   pure next
-eval (IncrementAsync next) = pure next
+eval (IncrementAsync next) = do
+  liftAff $ delay (Milliseconds 1000.0)
+  modify ((+) 1)
+  pure next
 
 render :: State -> ComponentHTML Query
 render count =

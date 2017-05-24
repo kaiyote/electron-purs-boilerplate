@@ -1,6 +1,7 @@
 module App where
 
 import App.Route (Location(..))
+import Control.Monad.Aff (Aff)
 import Data.Either (Either)
 import Data.Functor.Coproduct (Coproduct)
 import Data.Maybe (Maybe(..))
@@ -31,7 +32,7 @@ type QueryP = Coproduct Query ChildQuery
 init :: State
 init = Home
 
-ui :: ∀ m. Component HTML Query Unit Void m
+ui :: ∀ eff. Component HTML Query Unit Void (Aff eff)
 ui = parentComponent
   { initialState: const init
   , render
@@ -39,7 +40,7 @@ ui = parentComponent
   , receiver: const Nothing
   }
 
-render :: ∀ m. State -> ParentHTML Query ChildQuery ChildSlot m
+render :: ∀ eff. State -> ParentHTML Query ChildQuery ChildSlot (Aff eff)
 render Home = slot' pathToHome Home.Slot Home.ui unit absurd
 render Counter = slot' pathToCounter Counter.Slot Counter.ui unit absurd
 
