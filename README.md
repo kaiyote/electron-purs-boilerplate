@@ -9,7 +9,7 @@
 Clone the repo via git:
 
 ```bash
-git clone https://github.com/kaiyote/electron-elm-boilerplate.git your-project-name
+git clone https://github.com/kaiyote/electron-purs-boilerplate.git your-project-name
 ```
 
 Install bower
@@ -20,28 +20,21 @@ npm i -g bower
 And then install dependencies.
 
 ```bash
-$ cd your-project-name && npm i
+$ cd your-project-name && yarn
 ```
 
-This project is configured to require Node 6+. If you don't have that installed, you'll either need to augment the babel setup or upgrade your node.
+This project is configured to require Node 7+. If you don't have that installed, you'll either need to modify the package.json or upgrade your node.
 
 
 ## Run
 
-Run these two commands __simultaneously__ in different console tabs.
+Run the entire development setup with this one simple command:
 
 ```bash
-$ npm run hot-server
-$ npm run start-hot
+$ yarn dev
 ```
 
-or run two servers with one command
-
-```bash
-$ npm run dev
-```
-
-*Note: requires a node version >= 6 and an npm version >= 3.*
+*Note: requires a node version >= 7 and an npm version >= 3.*
 
 
 ## DevTools
@@ -76,19 +69,19 @@ You can find those lines in the file.
 ## Package
 
 ```bash
-$ npm run package
+$ yarn package
 ```
 
-To package apps for all platforms:
+To compress the resources into an asar:
 
 ```bash
-$ npm run package-all
+$ yarn package -- -a
 ```
 
 #### Options
 
-- --name, -n: Application name (default: ElectronReact)
-- --version, -v: Electron version (default: latest version)
+- --name, -n: Application name (default: ElectronPursBoilerplate)
+- --version, -v: Electron version (default: package.json version)
 - --asar, -a: [asar](https://github.com/atom/asar) support (default: false)
 - --icon, -i: Application icon
 - --all: pack for all platforms
