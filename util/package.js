@@ -8,8 +8,8 @@ import packager from 'electron-packager'
 import del from 'del'
 import { exec } from 'child_process'
 import minimist from 'minimist'
-const argv = minimist(process.argv.slice(2))
 import pkg from '../package.json'
+const argv = minimist(process.argv.slice(2))
 const deps = Object.keys(pkg.dependencies)
 const devDeps = Object.keys(pkg.devDependencies)
 const externals = electronCfg.externals
@@ -59,15 +59,15 @@ if (icon) {
 const version = argv.version || argv.v
 
 if (version) {
-  DEFAULT_OPTS.version = version
+  DEFAULT_OPTS.electronVersion = version
   startPack()
 } else {
   // use the same version as the currently-installed electron-prebuilt
   exec('npm list electron --dev', (err, stdout) => {
     if (err) {
-      DEFAULT_OPTS.version = '1.4.13'
+      DEFAULT_OPTS.electronVersion = '1.6.8'
     } else {
-      DEFAULT_OPTS.version = stdout.split('electron@')[1].replace(/\s/g, '')
+      DEFAULT_OPTS.electronVersion = stdout.split('electron@')[1].replace(/\s/g, '')
     }
 
     startPack()
@@ -129,7 +129,7 @@ function pack (plat, arch, cb) {
     platform: plat,
     arch,
     prune: true,
-    'app-version': pkg.version || DEFAULT_OPTS.version,
+    appVersion: pkg.version || DEFAULT_OPTS.version,
     out: `release/${plat}-${arch}`
   })
 
