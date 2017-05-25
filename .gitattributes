@@ -1,5 +1,6 @@
 * text=auto
-package.js linguist-vendored
-runHot.js linguist-vendored
-server.js linguist-vendored
+
+util/package.js linguist-vendored
+util/runHot.js linguist-vendored
+util/server.js linguist-vendored
 webpack.config* linguist-vendored

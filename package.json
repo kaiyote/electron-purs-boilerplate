@@ -20,9 +20,6 @@
     "ffi-compile": "babel ./src --only *.es6 --source-maps --out-dir ./src",
     "dev": "run-p hot-server start-hot \"ffi-compile -- -w\""
   },
-  "bin": {
-    "electron": "./node_modules/.bin/electron"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kaiyote/electron-purs-boilerplate.git"
@@ -90,7 +87,8 @@
     "webpack-hot-middleware": "^2.18.0"
   },
   "dependencies": {
-    "font-awesome": "^4.7.0"
+    "font-awesome": "^4.7.0",
+    "node-glob": "^1.2.0"
   },
   "devEngines": {
     "node": "7.x",
