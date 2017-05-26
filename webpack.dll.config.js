@@ -1,18 +1,20 @@
 'use strict'
 
 import Webpack from 'webpack'
+import BabiliPlugin from 'babili-webpack-plugin'
 import { sync } from 'glob'
 import { resolve } from 'path'
 
-export default {
+let config = {
+  target: 'electron-renderer',
   devtool: 'cheap-module-source-map',
   output: {
-    path: resolve('.'),
-    filename: '[name]-dll.js',
-    library: '[name]-[hash]-dll'
+    path: resolve('./dist'),
+    filename: '[name].js',
+    library: '[name][hash]'
   },
   entry: {
-    vendor: sync('bower_components/**/*.{js,purs}').map(p => resolve('.', p))
+    vendor: sync('bower_components/purescript-*/src/**/*.{js,purs}').map(p => resolve('.', p))
   },
   module: {
     rules: [{
@@ -34,9 +36,24 @@ export default {
     extensions: ['.purs', '.js']
   },
   plugins: [
+    new BabiliPlugin(), // always minify, you shouldn't care about stepping through the code in this bundle anyway
     new Webpack.DllPlugin({
       path: '[name]-manifest.json',
-      name: '[name]-[hash]_dll'
+      name: '[name][hash]'
     })
   ]
 }
+
+if (process.env.NODE_ENV === 'development') {
+  config.entry.vendor.push('webpack-dev-server/client?http://localhost:8080', 'webpack/hot/only-dev-server')
+
+  config.plugins.unshift(new Webpack.HotModuleReplacementPlugin(), new Webpack.NamedModulesPlugin())
+
+  config.devServer = {
+    hot: true,
+    contentBase: resolve('./dist'),
+    publicPath: '/'
+  }
+}
+
+export default config

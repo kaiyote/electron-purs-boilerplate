@@ -19,10 +19,15 @@
     <div id="container"></div>
     <script>
       (function() {
-        const script = document.createElement('script');
-        script.src = (process.env.HOT) ? 'http://localhost:3000/dist/bundle.js' : '../dist/bundle.js';
-        script.async = true;
-        document.write(script.outerHTML);
+        const vendorScript = document.createElement('script');
+        vendorScript.src = (process.env.HOT) ? 'http://localhost:8080/vendor.js' : '../dist/vendor.js';
+        document.body.appendChild(vendorScript);
+        vendorScript.onload = () => {
+          const bundleScript = document.createElement('script');
+          bundleScript.src = (process.env.HOT) ? 'http://localhost:8080/bundle.js' : '../dist/bundle.js';
+          bundleScript.async = true;
+          document.body.appendChild(bundleScript);
+        }
       }());
     </script>
   </body>

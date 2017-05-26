@@ -9,8 +9,11 @@
     "test-ui": "ava test.js",
     "test-e2e": "run-s build test-ui",
     "lint": "standard \"*.js\" \"**/*.es6\" \"app/**/*.js\" \"test/**/*.js\" --verbose | snazzy",
+    "ffi": "babel ./src --only *.es6 --source-maps --out-dir ./src",
     "webpack:dll": "node -r babel-register ./node_modules/webpack/bin/webpack --config webpack.dll.config.js --progress --profile --colors",
-
+    "webpack:dev": "node -r babel-register ./node_modules/webpack-dev-server/bin/webpack-dev-server --progress --profile --colors",
+    "electron:dev": "electron -r babel-register ./main.development.js",
+    "dev": "cross-env NODE_ENV=development HOT=1 run-p webpack:dev electron:dev \"ffi-compile -- -w\"",
 
 
     "hot-server": "node -r babel-register util/server.js",
@@ -21,8 +24,7 @@
     "start-hot": "cross-env HOT=1 NODE_ENV=development node -r babel-register util/runHot.js",
     "package": "cross-env NODE_ENV=production node -r babel-register util/package.js",
     "postinstall": "bower install",
-    "ffi-compile": "babel ./src --only *.es6 --source-maps --out-dir ./src",
-    "dev": "run-p hot-server start-hot \"ffi-compile -- -w\""
+    "ffi-compile": "babel ./src --only *.es6 --source-maps --out-dir ./src"
   },
   "repository": {
     "type": "git",
@@ -88,6 +90,7 @@
     "wait-on": "^2.0.2",
     "webpack": "^2.6.0",
     "webpack-dev-middleware": "^1.10.2",
+    "webpack-dev-server": "^2.4.5",
     "webpack-hot-middleware": "^2.18.0"
   },
   "dependencies": {

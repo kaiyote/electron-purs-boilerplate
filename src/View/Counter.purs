@@ -64,6 +64,6 @@ render count =
         , button [ class_ (ClassName "button"), onClick (input_ IncrementIfOdd) ]
             [ text "odd" ]
         , button [ class_ (ClassName "button"), onClick (input_ IncrementAsync) ]
-            [ text "async" ]
+            [ text "async!" ]
         ]
     ]
