@@ -33,6 +33,7 @@ Run the entire development setup with this one simple command:
 ```bash
 $ yarn dev
 ```
+*Important Note: `yarn dev` seems to produce an E2BIG error on macOS. If this is the case for you, you can instead use `npm run dev`*
 
 *Note: requires a node version >= 7 and an npm version >= 3.*
 
